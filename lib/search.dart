@@ -21,9 +21,12 @@ class _SearchPageState extends State<SearchPage> {
   double latitude = 0.0;
   double longitude = 0.0;
   double temperature = 0.0;
+  double windspeed = 0.0;
+  String countryname = '';
+  String statename = '';
   String errorMessage = '';
 
-  Future<void> getWeatherData(String cityName) async {
+  Future getWeatherData(String cityName) async {
     final _cityUrl = Uri.parse(
         'https://geocoding-api.open-meteo.com/v1/search?name=$cityName&count=1');
 
@@ -32,6 +35,7 @@ class _SearchPageState extends State<SearchPage> {
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
+        print(data);
 
         if (data['results'].isEmpty) {
           setState(() {
@@ -42,13 +46,17 @@ class _SearchPageState extends State<SearchPage> {
 
         latitude = data['results'][0]['latitude'];
         longitude = data['results'][0]['longitude'];
+        countryname = data['results'][0]['country'];
+        statename = data['results'][0]['admin1'];
         final String weatherUrl =
             'https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&current_weather=true';
         final weatherResponse = await http.get(Uri.parse(weatherUrl));
 
         if (weatherResponse.statusCode == 200) {
           var weatherData = jsonDecode(weatherResponse.body);
+          print(weatherData);
           temperature = weatherData['current_weather']['temperature'];
+          windspeed = weatherData['current_weather']['windspeed'];
         } else {
           setState(() {
             errorMessage = 'Error fetching weather data';
@@ -103,10 +111,13 @@ class _SearchPageState extends State<SearchPage> {
                     await getWeatherData(city);
 
                     context.go(MyRoutes.home, extra: {
-                      'cityName': city,
+                      'name': city,
                       'latitude': latitude,
                       'longitude': longitude,
                       'temperature': temperature,
+                      'windspeed': windspeed,
+                      'country': countryname,
+                      'admin1': statename,
                       'errorMessage': errorMessage,
                     });
                   }
