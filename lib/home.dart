@@ -15,25 +15,24 @@ class HomePage extends StatelessWidget {
     final String rainimg =
         "https://cdn-icons-png.flaticon.com/512/4724/4724094.png";
 
-    final String summer =
+    final String summerimg =
         "https://cdn-icons-png.flaticon.com/512/4814/4814268.png";
 
-    final String winter =
+    final String winterimg =
         "https://cdn-icons-png.flaticon.com/512/642/642000.png";
 
     final Map<String, dynamic> dataMap = data ?? {};
 
-    final cityName = dataMap['name'] ?? 'Search City Name';
-    final latitude = dataMap['latitude'] ?? 0.0;
-    final longitude = dataMap['longitude'] ?? 0.0;
-    final temperature = dataMap['temperature'] ?? 0.0;
-    final countryname = dataMap['country'] ?? 'Search City Name';
-    final statename = dataMap['admin1'] ?? 'Search City Name';
+    final cityName = dataMap['name'] ?? '';
+    final temperature = dataMap['temperature'] ?? "".toString();
+    double parsedTemperature = double.tryParse(temperature.toString()) ?? 0.0;
 
-    final windspeed = dataMap['windspeed'] ?? 0.0;
+    final countryname = dataMap['country'] ?? '';
+    final statename = dataMap['admin1'] ?? '';
+
+    final windspeed = dataMap['windspeed'] ?? "".toString();
     final DateTime time = DateTime.now();
 
-    final errorMessage = dataMap['errorMessage'] ?? '';
     return Scaffold(
       appBar: AppBar(
         title: const Text('Weather App'),
@@ -69,7 +68,7 @@ class HomePage extends StatelessWidget {
               height: 10,
             ),
             Text(
-              "Updated: $time",
+              "${cityName == null ? time.toLocal() : ""}",
               style: TextStyle(fontSize: 20, color: Color(0xffBBC7FF)),
             ),
             SizedBox(
@@ -79,14 +78,18 @@ class HomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.network(
-                  rainimg,
+                  (cityName != null)
+                      ? (parsedTemperature < 10
+                          ? winterimg
+                          : (parsedTemperature < 25 ? rainimg : summerimg))
+                      : winterimg,
                   height: 100,
                 ),
                 SizedBox(
                   width: 30,
                 ),
                 Text(
-                  "$temperature°C",
+                  "${(cityName != null) ? ("${temperature}°C") : ""}",
                   style: TextStyle(fontSize: 20, color: Color(0xffBBC7FF)),
                 ),
                 SizedBox(
@@ -96,20 +99,27 @@ class HomePage extends StatelessWidget {
                   "$windspeed",
                   style: TextStyle(fontSize: 20, color: Color(0xffBBC7FF)),
                 ),
-                SizedBox(
-                  width: 20,
-                ),
-                Text(
-                  "$countryname",
-                  style: TextStyle(fontSize: 20, color: Color(0xffBBC7FF)),
-                ),
               ],
             ),
             SizedBox(
               height: 20,
             ),
             Text(
-              "${rainimg.isNotEmpty ? "Shower" : "Winter"}",
+              "$countryname",
+              style: TextStyle(fontSize: 20, color: Color(0xffBBC7FF)),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Text(
+              "$statename",
+              style: TextStyle(fontSize: 20, color: Color(0xffBBC7FF)),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Text(
+              "${(cityName != null) ? (temperature == 25 ? "Shower" : "Summer") : ""}",
               style: TextStyle(fontSize: 20, color: Color(0xffBBC7FF)),
             ),
           ],

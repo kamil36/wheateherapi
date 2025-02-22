@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wheather_api_cubit_bloc/home.dart';
@@ -16,7 +14,7 @@ class MyRoutes {
   MyRoutes() {
     router = GoRouter(
       routes: [
-        GoRoute(
+        GoRoute(  
             name: MyRoutes.home,
             path: MyRoutes.home,
             builder: (context, state) {
